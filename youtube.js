@@ -1,14 +1,16 @@
-async function youtube(value, tp) {
-    // Get HTML document
-    let url = await tp.system.clipboard()
-    let altDomain = "yewtu.be" // invidious.io
-    if (url.includes(altDomain)) {
-        var regex = new RegExp(altDomain, 'g');
-        url = url.replace(regex, "youtube.com")
+async function youtube(value, tp, html) {
+    if (html === undefined) {
+        let url = await tp.system.clipboard()
+        // Alternative front-end (invidious.io)
+        let altDomain = "yewtu.be"
+        if (url.includes(altDomain)) {
+            var regex = new RegExp(altDomain, 'g');
+            url = url.replace(regex, "youtube.com")
+        }
+        let page = await tp.obsidian.request({url})
+        let p = new DOMParser()
+        html = p.parseFromString(page, "text/html")
     }
-    let page = await tp.obsidian.request({url})
-    let p = new DOMParser()
-    let html = p.parseFromString(page, "text/html")
 
     switch(value) {
         case "url":
@@ -73,15 +75,15 @@ function keywordsQ(html) {
     return kwords
 }
 
-function keywordsW(html) {
-    let kwords = keywords(html)
-    kwords = '[[' + kwords.replace(/, /g, ']], [[') + ']]'
-    return kwords
-}
-
 function keywordsL(html) {
     let kwords = keywords(html)
     kwords = '\n- ' + kwords.replace(/, /g, '\n- ')
+    return kwords
+}
+
+function keywordsW(html) {
+    let kwords = keywords(html)
+    kwords = '[[' + kwords.replace(/, /g, ']], [[') + ']]'
     return kwords
 }
 
