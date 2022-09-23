@@ -11,19 +11,21 @@ async function youtube(value, tp, html) {
         let p = new DOMParser()
         html = p.parseFromString(page, "text/html")
     }
+    // Alias for querySelector
+    let $ = s => html.querySelector(s)
 
     switch(value) {
-        case "url":
-            return link(html)
-            break
         case "title":
-            return title(html)
+            return $("meta[property='og:title']").content
             break
         case "channel":
-            return channel(html)
+            return $("link[itemprop='name']").getAttribute("content")
             break
         case "published":
-            return published(html)
+            return $("meta[itemprop='uploadDate']").content
+            break
+        case "url":
+            return link(html)
             break
         case "thumbnail":
             return thumbnail(html)
@@ -49,18 +51,6 @@ function link(html) {
     return html.querySelector("link[rel='shortLinkUrl']").href
 }
 
-function title(html) {
-    return html.querySelector("meta[property='og:title']").content
-}
-
-function channel(html) {
-    return html.querySelector("link[itemprop='name']").getAttribute("content")
-}
-
-function published(html) {
-    return html.querySelector("meta[itemprop='uploadDate']").content
-}
-
 function thumbnail(html) {
     return link(html).replace(/youtu.be/, "img.youtube.com/vi").concat("/maxresdefault.jpg")
 }
@@ -71,20 +61,17 @@ function keywords(html) {
 
 function keywordsQ(html) {
     let kwords = keywords(html)
-    kwords = '"' + kwords.replace(/, /g, '", "') + '"'
-    return kwords
+    return '"' + kwords.replace(/, /g, '", "') + '"'
 }
 
 function keywordsL(html) {
     let kwords = keywords(html)
-    kwords = '\n- ' + kwords.replace(/, /g, '\n- ')
-    return kwords
+    return '\n- ' + kwords.replace(/, /g, '\n- ')
 }
 
 function keywordsW(html) {
     let kwords = keywords(html)
-    kwords = '[[' + kwords.replace(/, /g, ']], [[') + ']]'
-    return kwords
+    return '[[' + kwords.replace(/, /g, ']], [[') + ']]'
 }
 
 module.exports = youtube
