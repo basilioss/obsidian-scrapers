@@ -13,22 +13,28 @@ async function goodreads(value, tp, html) {
             return $("link[rel='canonical']").href
             break
         case "title":
-            return $("h1[id='bookTitle']").innerHTML.trim()
+            return $("h1[id='bookTitle']").innerHTML.trim() || ""
             break
         case "authors":
             return authors(html)
             break
         case "authorsQ":
-            return authorsQ(html)
+            // Quotes
+            let authorsQ = authors(html)
+            return '"' + authorsQ.replace(/, /g, '", "') + '"'
             break
         case "authorsL":
-            return authorsL(html)
+            // List
+            let authorsL = authors(html)
+            return "\n- " + authorsL.replace(/, /g, '\n- ')
             break
         case "authorsW":
-            return authorsW(html)
+            // Wiki links
+            let authorsW = authors(html)
+            return "[[" + authorsW.replace(/, /g, ']], [[') + "]]"
             break
         case "isbn":
-            return $("meta[property='books:isbn']").content
+            return $("meta[property='books:isbn']").content || ""
             break
         case "published":
             return published(html)
@@ -37,17 +43,25 @@ async function goodreads(value, tp, html) {
             return genres(html)
             break
         case "genresQ":
-            return genresQ(html)
+            let genresQ = genres(html)
+            return '"' + genresQ.replace(/, /g, '", "') + '"'
             break
         case "genresL":
-            return genresL(html)
+            let genresL = genres(html)
+            return "\n- " + genresL.replace(/, /g, '\n- ')
             break
         case "genresW":
-            return genresW(html)
+            let genresW = genres(html)
+            return "[[" + genresW.replace(/, /g, ']], [[') + "]]"
             break
         case "cover":
-            return $("img[id='coverImage']").src
+            return $("img[id='coverImage']").src || ""
             break
+        case "pageCount":
+            return $("meta[property*='page_count']").content ?? ""
+            break
+        case "description":
+            return $("meta[property='og:description']").content ?? ""
         default:
             new Notice("Incorrect parameter: " + value, 5000)
     }
@@ -57,24 +71,6 @@ function authors(html) {
     let authors = html.querySelectorAll("span[itemprop=name]")
     authors = Array.from(authors, authors => authors.textContent)
     return authors.join(', ')
-}
-
-function authorsQ(html) {
-    let authors = html.querySelectorAll("span[itemprop=name]")
-    authors = Array.from(authors, authors => authors.textContent)
-    return '"' + authors.join('", "') + '"'
-}
-
-function authorsL(html) {
-    let authors = html.querySelectorAll("span[itemprop=name]")
-    authors = Array.from(authors, authors => authors.textContent)
-    return "\n- " + authors.join('\n- ')
-}
-
-function authorsW(html) {
-    let authors = html.querySelectorAll("span[itemprop=name]")
-    authors = Array.from(authors, authors => authors.textContent)
-    return "[[" + authors.join(']], [[') + "]]"
 }
 
 function published(html) {
@@ -98,27 +94,6 @@ function genres(html) {
     genres = Array.from(genres, genres => genres.textContent.toLowerCase())
     genres = [...new Set(genres)] // Remove duplicates
     return genres.join(', ')
-}
-
-function genresQ(html) {
-    let genres = html.querySelectorAll("a[class='actionLinkLite bookPageGenreLink']")
-    genres = Array.from(genres, genres => genres.textContent.toLowerCase())
-    genres = [...new Set(genres)]
-    return '"' + genres.join('", "') + '"'
-}
-
-function genresL(html) {
-    let genres = html.querySelectorAll("a[class='actionLinkLite bookPageGenreLink']")
-    genres = Array.from(genres, genres => genres.textContent.toLowerCase())
-    genres = [...new Set(genres)]
-    return '\n- ' + genres.join('\n- ')
-}
-
-function genresW(html) {
-    let genres = html.querySelectorAll("a[class='actionLinkLite bookPageGenreLink']")
-    genres = Array.from(genres, genres => genres.textContent.toLowerCase())
-    genres = [...new Set(genres)]
-    return '[[' + genres.join(']], [[') + ']]'
 }
 
 module.exports = goodreads
