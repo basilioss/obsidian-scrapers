@@ -1,28 +1,33 @@
-async function wikipedia(value, tp, html) {
-    if (html === undefined) {
-        let url = await tp.system.clipboard()
-        let page = await tp.obsidian.request({url})
-        let p = new DOMParser()
-        html = p.parseFromString(page, "text/html")
-    }
-    let json = JSON.parse(html.querySelector("script[type='application/ld+json']").innerHTML)
+async function wikipedia(value, tp, doc) {
+  if (doc === undefined) {
+    let url = await tp.system.clipboard();
+    let page = await tp.obsidian.request({ url });
+    let p = new DOMParser();
+    doc = p.parseFromString(page, "text/html");
+  }
 
-    switch(value) {
-        case "title":
-            return json?.name || ""
-            break
-        case "url":
-            return json?.url || ""
-            break
-        case "image":
-            return json?.image || ""
-            break
-        case "headline":
-            // Short description
-            return json?.headline || ""
-        default:
-            new Notice("Incorrect parameter: " + value, 5000)
-    }
+  let json = "";
+  try {
+    json = JSON.parse(
+      doc.querySelector("script[type='application/ld+json']").innerHTML
+    );
+  } catch (error) {
+    new Notice(error);
+  }
+
+  switch (value) {
+    case "title":
+      return json?.name || "";
+    case "url":
+      return json?.url || "";
+    case "image":
+      return json?.image || "";
+    case "headline":
+      // Short description
+      return json?.headline || "";
+    default:
+      new Notice("Incorrect parameter: " + value, 5000);
+  }
 }
 
-module.exports = wikipedia
+module.exports = wikipedia;
