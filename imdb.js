@@ -5,7 +5,7 @@ async function imdb(value, tp, doc) {
     let p = new DOMParser();
     doc = p.parseFromString(page, "text/html");
   }
-  
+
   let json = JSON.parse(
     doc.querySelector("script[type='application/ld+json']").innerHTML
   );
@@ -16,7 +16,13 @@ async function imdb(value, tp, doc) {
     case "image":
       return image(json);
     case "published":
-      return published(json);
+      let datePublished = "";
+      if (json.datePublished != null) {
+        datePublished = JSON.stringify(json.datePublished).substring(1, 5);
+      } else {
+        datePublished = doc.querySelector("a[href*='releaseinfo']").innerText
+      }
+      return datePublished;
     case "keywords":
       return keywords(json);
     case "keywordsQ":
@@ -60,7 +66,7 @@ async function imdb(value, tp, doc) {
     case "type":
       return type(json);
     case "contentRating":
-      return json.contentRating;
+      return json?.contentRating || "";
     case "genres":
       return genres(json);
     case "genresQ":
@@ -84,7 +90,7 @@ async function imdb(value, tp, doc) {
       let starsW = stars(json);
       return "[[" + starsW.replace(/, /g, "]], [[") + "]]";
     case "imdbRating":
-      return json.aggregateRating.ratingValue;
+      return json.aggregateRating?.ratingValue || "";
     case "countries":
       return countries(doc);
     case "countriesQ":
@@ -119,14 +125,6 @@ function image(json) {
     image = json.image;
   }
   return image;
-}
-
-function published(json) {
-  let datePublished = "";
-  if (json.datePublished != null) {
-    datePublished = JSON.stringify(json.datePublished).substring(1, 5);
-  }
-  return datePublished;
 }
 
 function keywords(json) {
