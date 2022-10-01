@@ -34,6 +34,8 @@ Put it in your templates folder. After this you can simply copy a link to a vide
 
 https://user-images.githubusercontent.com/71596800/193123180-46c50dca-c504-464b-bbdc-9f6dcd93c102.mp4
 
+[See](https://github.com/SilentVoid13/Templater/discussions/846) also how to create a meta-template to automatically insert the desired one depending on the link domain.
+
 ## How to speed up execution time
 
 Requesting a web page for each function may take a little too much time with some templates but it's possible to request it only once and pass the same `doc` parameter to each function.
@@ -41,13 +43,14 @@ Requesting a web page for each function may take a little too much time with som
 Here's what you need to do for the YouTube template:
 
 ```
----<%*
+---
+<%*
 // Request a web page
 let url = await tp.system.clipboard()
 let page = await tp.obsidian.request({url})
 let p = new DOMParser()
 let doc = p.parseFromString(page, "text/html")
-%>
+-%>
 url: "<% tp.user.youtube('url', tp, doc) %>"
 aliases: ["<% tp.user.youtube('title', tp, doc) %>"]
 channel: "<% tp.user.youtube('channel', tp, doc) %>"
@@ -70,7 +73,7 @@ let url = await tp.system.clipboard()
 let page = await tp.obsidian.request({url})
 let p = new DOMParser()
 let doc = p.parseFromString(page, "text/html")
-%>
+-%>
 ```
 
 ## Available functions
