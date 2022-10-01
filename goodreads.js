@@ -12,7 +12,8 @@ async function goodreads(value, tp, doc) {
     case "url":
       return $("link[rel='canonical']").href;
     case "title":
-      return $("h1[id='bookTitle']").innerHTML.trim() || "";
+      let title = $("h1[id='bookTitle']").innerHTML || "";
+      return title.trim().replace(/&amp;/g, "&");
     case "authors":
       return authors(doc);
     case "authorsQ":

@@ -36,12 +36,13 @@ async function website(value, tp, doc) {
         .replace(/&quot;/g, '"')
         .replace(/&nbsp;/g, " ");
     case "image":
-      return (
+      let image =
         $("meta[property='og:image']")?.content ||
         $("meta[name='twitter:image']")?.content ||
         $("meta[name='twitter:image:src']")?.content ||
-        ""
-      );
+        "";
+      // Remove unnecessary part
+      return image.replace(/\?.*$/g, "")
     default:
       new Notice("Incorrect parameter: " + value, 5000);
   }
