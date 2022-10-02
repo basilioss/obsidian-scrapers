@@ -32,7 +32,7 @@ duration: <% tp.user.youtube('duration', tp) %>
 
 Put it in your templates folder. After this you can simply copy a link to a video and run Templater to insert the template into a note:
 
-https://user-images.githubusercontent.com/71596800/193123180-46c50dca-c504-464b-bbdc-9f6dcd93c102.mp4
+https://user-images.githubusercontent.com/71596800/193448137-3a4d4489-cbc6-4108-905c-9eb3165e6ee1.mp4
 
 [See](https://github.com/SilentVoid13/Templater/discussions/846) also how to create a meta-template to automatically insert the desired one depending on the link domain.
 
