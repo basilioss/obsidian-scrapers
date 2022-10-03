@@ -2,6 +2,8 @@
 
 A collection of [Templater](https://github.com/SilentVoid13/Templater) scripts for [Obsidian](https://obsidian.md/) that can be easily integrated into your templates to get information from different sites with a copied link.
 
+https://user-images.githubusercontent.com/71596800/193448137-3a4d4489-cbc6-4108-905c-9eb3165e6ee1.mp4
+
 ## Installation
 
 1. Install Templater via the Community Plugins tab within Obsidian.
@@ -30,11 +32,9 @@ duration: <% tp.user.youtube('duration', tp) %>
 <% tp.user.youtube('description', tp) %>
 ```
 
-Put it in your templates folder. After this you can simply copy a link to a video and run Templater to insert the template into a note:
+Put it in your templates folder. After this you can simply copy a link to a video and run Templater to insert the template into a note.
 
-https://user-images.githubusercontent.com/71596800/193448137-3a4d4489-cbc6-4108-905c-9eb3165e6ee1.mp4
-
-[See](https://github.com/SilentVoid13/Templater/discussions/846) also how to create a meta-template to automatically insert the desired one depending on the link domain.
+[See](https://github.com/SilentVoid13/Templater/discussions/846) also Goodreads template example and how to create a meta-template to automatically insert the right template depending on the link domain.
 
 ## How to speed up execution time
 
@@ -103,7 +103,7 @@ let doc = p.parseFromString(page, "text/html")
 | `<% tp.user.youtube('keywordsQ', tp) %>`   | Get keywords enclosed in quotes     |
 | `<% tp.user.youtube('keywordsW', tp) %>`   | Get keywords formatted as wikilinks |
 
-[Invidious](https://invidious.io/) instance [yewtu.be](https://yewtu.be/) is also supported if you don't pass optional `doc` parameter as described [here](https://github.com/basilioss/obsidian-scrapers/edit/main/README.md#how-to-speed-up-execution-time). If you use another alternative YouTube front-end or instance, you can specify it in the `altDomain` variable in the `youtube.js` file.
+[Invidious](https://invidious.io/) instance [yewtu.be](https://yewtu.be/) is also supported if you don't pass optional `doc` parameter as described [above](https://github.com/basilioss/obsidian-scrapers/#how-to-speed-up-execution-time). If you use another alternative YouTube front-end or instance, you can specify it in the `altDomain` variable in the `youtube.js` file.
 
 ### [Goodreads](https://www.goodreads.com/)
 
