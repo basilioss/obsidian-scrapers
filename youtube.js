@@ -49,6 +49,8 @@ async function youtube(value, tp, doc) {
       return duration.replace(/M/gi, "m ").replace(/S/gi, "s");
     case "description":
       return $("meta[itemprop='description']").content;
+    case "id":
+      return $("meta[itemprop='videoId']").content;
     default:
       new Notice("Incorrect parameter: " + value, 5000);
   }

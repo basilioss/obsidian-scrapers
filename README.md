@@ -98,6 +98,7 @@ let doc = p.parseFromString(page, "text/html")
 | `<% tp.user.youtube('url', tp) %>`         | Get url                             |
 | `<% tp.user.youtube('duration', tp) %>`    | Get duration                        |
 | `<% tp.user.youtube('description', tp) %>` | Get description                     |
+| `<% tp.user.youtube('id', tp) %>`          | Get ID (can be used in embeds)      |
 | `<% tp.user.youtube('keywords', tp) %>`    | Get string of keywords              |
 | `<% tp.user.youtube('keywordsL', tp) %>`   | Get list of keywords                |
 | `<% tp.user.youtube('keywordsQ', tp) %>`   | Get keywords enclosed in quotes     |
