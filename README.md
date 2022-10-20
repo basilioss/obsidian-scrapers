@@ -125,6 +125,7 @@ let doc = p.parseFromString(page, "text/html")
 | `<% tp.user.goodreads('cover', tp) %>`       | Get cover link                     |
 | `<% tp.user.goodreads('pageCount', tp) %>`   | Get number of pages                |
 | `<% tp.user.goodreads('description', tp) %>` | Get description                    |
+| `<% tp.user.goodreads('rating', tp) %>`      | Get rating                         |
 
 ### [IMDb](https://www.imdb.com/)
 

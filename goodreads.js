@@ -12,7 +12,7 @@ async function goodreads(value, tp, doc) {
     case "url":
       return $("link[rel='canonical']").href;
     case "title":
-      let title = $("h1[id='bookTitle']").innerHTML || "";
+      let title = $("h1[id='bookTitle']").innerHTML ?? "";
       return title.trim().replace(/&amp;/g, "&");
     case "authors":
       return authors(doc);
@@ -29,7 +29,7 @@ async function goodreads(value, tp, doc) {
       let authorsW = authors(doc);
       return "[[" + authorsW.replace(/, /g, "]], [[") + "]]";
     case "isbn":
-      return $("meta[property='books:isbn']").content || "";
+      return $("meta[property='books:isbn']").content ?? "";
     case "published":
       return published(doc);
     case "genres":
@@ -44,11 +44,13 @@ async function goodreads(value, tp, doc) {
       let genresW = genres(doc);
       return "[[" + genresW.replace(/, /g, "]], [[") + "]]";
     case "cover":
-      return $("img[id='coverImage']").src || "";
+      return $("img[id='coverImage']").src ?? "";
     case "pageCount":
       return $("meta[property*='page_count']").content ?? "";
     case "description":
       return $("meta[property='og:description']").content.trim() ?? "";
+    case "rating":
+      return $("span[itemprop='ratingValue']").innerText.trim() ?? "";
     default:
       new Notice("Incorrect parameter: " + value, 5000);
   }
