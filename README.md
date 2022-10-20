@@ -157,6 +157,7 @@ let doc = p.parseFromString(page, "text/html")
 | `<% tp.user.imdb('starsQ', tp) %>`      | Get stars enclosed in quotes         |
 | `<% tp.user.imdb('starsW', tp) %>`      | Get stars formatted as wikilinks     |
 | `<% tp.user.imdb('imdbRating', tp) %>`  | Get IMDb rating                      |
+| `<% tp.user.imdb('contentRating', tp) %>` | Get content rating                 |
 | `<% tp.user.imdb('countries', tp) %>`   | Get string of countries              |
 | `<% tp.user.imdb('countriesL', tp) %>`  | Get list of countries                |
 | `<% tp.user.imdb('countriesQ', tp) %>`  | Get countries enclosed in quotes     |
