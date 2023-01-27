@@ -49,6 +49,16 @@ async function youtube(value, tp, doc) {
       return duration.replace(/M/gi, "m ").replace(/S/gi, "s");
     case "description":
       return $("meta[itemprop='description']").content;
+    case "descriptionFull":
+      let html = new XMLSerializer().serializeToString(doc)
+      let description = html.match(/"shortDescription":".*?","isCrawlable":/);
+      return description
+        .toString()
+        .replace(/"shortDescription":"/, "")
+        .replace(/","isCrawlable":$/, "")
+        .replace(/\\n/g, "\n")
+        .replace(/\\r/g, "")
+        .replace(/\\"/g, '"');
     case "id":
       return $("meta[itemprop='videoId']").content;
     default:

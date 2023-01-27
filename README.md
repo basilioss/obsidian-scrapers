@@ -89,20 +89,21 @@ let doc = p.parseFromString(page, "text/html")
 
 ### [YouTube](https://www.youtube.com/)
 
-| Function                                   | Description                         |
-| ------------------------------------------ | ----------------------------------- |
-| `<% tp.user.youtube('title', tp) %>`       | Get title                           |
-| `<% tp.user.youtube('channel', tp) %>`     | Get channel name                    |
-| `<% tp.user.youtube('published', tp) %>`   | Get publish date                    |
-| `<% tp.user.youtube('thumbnail', tp) %>`   | Get thumbnail link                  |
-| `<% tp.user.youtube('url', tp) %>`         | Get url                             |
-| `<% tp.user.youtube('duration', tp) %>`    | Get duration                        |
-| `<% tp.user.youtube('description', tp) %>` | Get description                     |
-| `<% tp.user.youtube('id', tp) %>`          | Get ID (can be used in embeds)      |
-| `<% tp.user.youtube('keywords', tp) %>`    | Get string of keywords              |
-| `<% tp.user.youtube('keywordsL', tp) %>`   | Get list of keywords                |
-| `<% tp.user.youtube('keywordsQ', tp) %>`   | Get keywords enclosed in quotes     |
-| `<% tp.user.youtube('keywordsW', tp) %>`   | Get keywords formatted as wikilinks |
+| Function                                       | Description                         |
+| ---------------------------------------------- | ----------------------------------- |
+| `<% tp.user.youtube('title', tp) %>`           | Get title                           |
+| `<% tp.user.youtube('channel', tp) %>`         | Get channel name                    |
+| `<% tp.user.youtube('published', tp) %>`       | Get publish date                    |
+| `<% tp.user.youtube('thumbnail', tp) %>`       | Get thumbnail link                  |
+| `<% tp.user.youtube('url', tp) %>`             | Get url                             |
+| `<% tp.user.youtube('duration', tp) %>`        | Get duration                        |
+| `<% tp.user.youtube('description', tp) %>`     | Get short description               |
+| `<% tp.user.youtube('descriptionFull', tp) %>` | Get full description                |
+| `<% tp.user.youtube('id', tp) %>`              | Get ID (can be used in embeds)      |
+| `<% tp.user.youtube('keywords', tp) %>`        | Get string of keywords              |
+| `<% tp.user.youtube('keywordsL', tp) %>`       | Get list of keywords                |
+| `<% tp.user.youtube('keywordsQ', tp) %>`       | Get keywords enclosed in quotes     |
+| `<% tp.user.youtube('keywordsW', tp) %>`       | Get keywords formatted as wikilinks |
 
 [Invidious](https://invidious.io/) instance [yewtu.be](https://yewtu.be/) is also supported if you don't pass optional `doc` parameter as described [above](https://github.com/basilioss/obsidian-scrapers/#how-to-speed-up-execution-time). If you use another alternative YouTube front-end or instance, you can specify it in the `altDomain` variable in the `youtube.js` file.
 
@@ -129,41 +130,41 @@ let doc = p.parseFromString(page, "text/html")
 
 ### [IMDb](https://www.imdb.com/)
 
-| Function                                | Description                          |
-| --------------------------------------- | ------------------------------------ |
-| `<% tp.user.imdb('title', tp) %>`       | Get title                            |
-| `<% tp.user.imdb('image', tp) %>`       | Get poster link                      |
-| `<% tp.user.imdb('published', tp) %>`   | Get publish date                     |
-| `<% tp.user.imdb('keywords', tp) %>`    | Get string of keywords               |
-| `<% tp.user.imdb('keywordsL', tp) %>`   | Get list of keywords                 |
-| `<% tp.user.imdb('keywordsQ', tp) %>`   | Get keywords enclosed in quotes      |
-| `<% tp.user.imdb('keywordsW', tp) %>`   | Get keywords formatted as wikilinks  |
-| `<% tp.user.imdb('directors', tp) %>`   | Get string of directors              |
-| `<% tp.user.imdb('directorsL', tp) %>`  | Get list of directors                |
-| `<% tp.user.imdb('directorsQ', tp) %>`  | Get directors enclosed in quotes     |
-| `<% tp.user.imdb('directorsW', tp) %>`  | Get directors formatted as wikilinks |
-| `<% tp.user.imdb('creators', tp) %>`    | Get string of creators               |
-| `<% tp.user.imdb('creatorsL', tp) %>`   | Get list of creators                 |
-| `<% tp.user.imdb('creatorsQ', tp) %>`   | Get creators enclosed in quotes      |
-| `<% tp.user.imdb('creatorsW', tp) %>`   | Get creators enclosed in wikilinks   |
-| `<% tp.user.imdb('duration', tp) %>`    | Get duration                         |
-| `<% tp.user.imdb('description', tp) %>` | Get description                      |
-| `<% tp.user.imdb('type', tp) %>`        | Get type (movie/series)              |
-| `<% tp.user.imdb('genres', tp) %>`      | Get string of genres                 |
-| `<% tp.user.imdb('genresL', tp) %>`     | Get list of genres                   |
-| `<% tp.user.imdb('genresQ', tp) %>`     | Get genres enclosed in quotes        |
-| `<% tp.user.imdb('genresW', tp) %>`     | Get genres formatted as wikilinks    |
-| `<% tp.user.imdb('stars', tp) %>`       | Get string of stars                  |
-| `<% tp.user.imdb('starsL', tp) %>`      | Get list of stars                    |
-| `<% tp.user.imdb('starsQ', tp) %>`      | Get stars enclosed in quotes         |
-| `<% tp.user.imdb('starsW', tp) %>`      | Get stars formatted as wikilinks     |
-| `<% tp.user.imdb('imdbRating', tp) %>`  | Get IMDb rating                      |
-| `<% tp.user.imdb('contentRating', tp) %>` | Get content rating                 |
-| `<% tp.user.imdb('countries', tp) %>`   | Get string of countries              |
-| `<% tp.user.imdb('countriesL', tp) %>`  | Get list of countries                |
-| `<% tp.user.imdb('countriesQ', tp) %>`  | Get countries enclosed in quotes     |
-| `<% tp.user.imdb('countriesW', tp) %>`  | Get countries formatted as wikilinks |
-| `<% tp.user.imdb('url', tp) %>`         | Get url                              |
+| Function                                  | Description                          |
+| ----------------------------------------- | ------------------------------------ |
+| `<% tp.user.imdb('title', tp) %>`         | Get title                            |
+| `<% tp.user.imdb('image', tp) %>`         | Get poster link                      |
+| `<% tp.user.imdb('published', tp) %>`     | Get publish date                     |
+| `<% tp.user.imdb('keywords', tp) %>`      | Get string of keywords               |
+| `<% tp.user.imdb('keywordsL', tp) %>`     | Get list of keywords                 |
+| `<% tp.user.imdb('keywordsQ', tp) %>`     | Get keywords enclosed in quotes      |
+| `<% tp.user.imdb('keywordsW', tp) %>`     | Get keywords formatted as wikilinks  |
+| `<% tp.user.imdb('directors', tp) %>`     | Get string of directors              |
+| `<% tp.user.imdb('directorsL', tp) %>`    | Get list of directors                |
+| `<% tp.user.imdb('directorsQ', tp) %>`    | Get directors enclosed in quotes     |
+| `<% tp.user.imdb('directorsW', tp) %>`    | Get directors formatted as wikilinks |
+| `<% tp.user.imdb('creators', tp) %>`      | Get string of creators               |
+| `<% tp.user.imdb('creatorsL', tp) %>`     | Get list of creators                 |
+| `<% tp.user.imdb('creatorsQ', tp) %>`     | Get creators enclosed in quotes      |
+| `<% tp.user.imdb('creatorsW', tp) %>`     | Get creators enclosed in wikilinks   |
+| `<% tp.user.imdb('duration', tp) %>`      | Get duration                         |
+| `<% tp.user.imdb('description', tp) %>`   | Get description                      |
+| `<% tp.user.imdb('type', tp) %>`          | Get type (movie/series)              |
+| `<% tp.user.imdb('genres', tp) %>`        | Get string of genres                 |
+| `<% tp.user.imdb('genresL', tp) %>`       | Get list of genres                   |
+| `<% tp.user.imdb('genresQ', tp) %>`       | Get genres enclosed in quotes        |
+| `<% tp.user.imdb('genresW', tp) %>`       | Get genres formatted as wikilinks    |
+| `<% tp.user.imdb('stars', tp) %>`         | Get string of stars                  |
+| `<% tp.user.imdb('starsL', tp) %>`        | Get list of stars                    |
+| `<% tp.user.imdb('starsQ', tp) %>`        | Get stars enclosed in quotes         |
+| `<% tp.user.imdb('starsW', tp) %>`        | Get stars formatted as wikilinks     |
+| `<% tp.user.imdb('imdbRating', tp) %>`    | Get IMDb rating                      |
+| `<% tp.user.imdb('contentRating', tp) %>` | Get content rating                   |
+| `<% tp.user.imdb('countries', tp) %>`     | Get string of countries              |
+| `<% tp.user.imdb('countriesL', tp) %>`    | Get list of countries                |
+| `<% tp.user.imdb('countriesQ', tp) %>`    | Get countries enclosed in quotes     |
+| `<% tp.user.imdb('countriesW', tp) %>`    | Get countries formatted as wikilinks |
+| `<% tp.user.imdb('url', tp) %>`           | Get url                              |
 
 ### [Letterboxd](https://letterboxd.com/)
 
@@ -234,4 +235,3 @@ let doc = p.parseFromString(page, "text/html")
 | `<% tp.user.odysee('keywordsL', tp) %>`   | Get list of keywords                |
 | `<% tp.user.odysee('keywordsQ', tp) %>`   | Get keywords enclosed in quotes     |
 | `<% tp.user.odysee('keywordsW', tp) %>`   | Get keywords formatted as wikilinks |
-
