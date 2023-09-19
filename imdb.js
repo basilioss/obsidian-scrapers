@@ -1,6 +1,12 @@
 async function imdb(value, tp, doc) {
+  let url = await tp.system.clipboard();
+
+  if (!isValidHttpUrl(url)) {
+    console.error("Invalid URL for " + value);
+    return "";
+  }
+
   if (doc === undefined) {
-    let url = await tp.system.clipboard();
     let page = await tp.obsidian.request({ url });
     let p = new DOMParser();
     doc = p.parseFromString(page, "text/html");
@@ -107,6 +113,18 @@ async function imdb(value, tp, doc) {
     default:
       new Notice("Incorrect parameter: " + value, 5000);
   }
+}
+
+function isValidHttpUrl(string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
 }
 
 function title(json) {

@@ -1,6 +1,11 @@
 async function website(value, tp, doc) {
   let url = await tp.system.clipboard();
 
+  if (!isValidHttpUrl(url)) {
+    console.error("Invalid URL for " + value);
+    return "";
+  }
+
   if (doc === undefined) {
     let page = await tp.obsidian.request(url);
     let p = new DOMParser();
@@ -46,6 +51,18 @@ async function website(value, tp, doc) {
     default:
       new Notice("Incorrect parameter: " + value, 5000);
   }
+}
+
+function isValidHttpUrl(string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
 }
 
 module.exports = website;

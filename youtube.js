@@ -1,6 +1,11 @@
 async function youtube(value, tp, doc) {
   let url = await tp.system.clipboard();
 
+  if (!isValidHttpUrl(url)) {
+    console.error("Invalid URL for " + value);
+    return "";
+  }
+
   if (doc === undefined) {
     // Alternative front-end (invidious.io)
     let altDomain = "yewtu.be";
@@ -96,6 +101,18 @@ async function youtube(value, tp, doc) {
     default:
       new Notice("Incorrect parameter: " + value, 5000);
   }
+}
+
+function isValidHttpUrl(string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
 }
 
 function log_parsing_error(variable) {
