@@ -58,6 +58,14 @@ async function letterboxd(value, tp, doc) {
       return formatList(cast(json), "cast");
     case "castW":
       return formatLink(cast(json), "cast");
+    case "castShort":
+      return safeReturn(castShort(json), "castShort");
+    case "castShortQ":
+      return formatQuote(castShort(json), "castShort");
+    case "castShortL":
+      return formatList(castShort(json), "castShort");
+    case "castShortW":
+      return formatLink(castShort(json), "castShort");
     case "title":
       return safeReturn(json?.name?.replace(/"/g, "”"), "title");
     case "genres":
@@ -170,6 +178,12 @@ function cast(json) {
     return json.actors.map((a) => a.name).join(", ");
   }
   return "";
+}
+
+function castShort(json, n = 5) {
+  let _cast = cast(json);
+  if (!_cast) return "";
+  return _cast.split(", ").slice(0, n).join(", ");
 }
 
 function genres(json) {
