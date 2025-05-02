@@ -18,111 +18,130 @@ async function youtube(value, tp, doc) {
     doc = p.parseFromString(page, "text/html");
   }
 
-  // Alias for querySelector
-  let $ = (s) => doc.querySelector(s);
+  const $ = (selector) => doc.querySelector(selector);
 
   switch (value) {
     case "title":
-      let title = $("meta[property='og:title']")?.content || "";
-      if (!title) log_parsing_error("title");
-      return title.replace(/"/g, "'");
+      return safeReturn(getTitle(doc), "title");
     case "channel":
-      let channel = $("link[itemprop='name']")?.getAttribute("content") || "";
-      if (!channel) log_parsing_error("channel");
-      return channel;
+      return safeReturn(getChannel(doc), "channel");
     case "published":
-      let published = $("meta[itemprop='uploadDate']")?.content || "";
-      if (!published) log_parsing_error("published");
-      return published;
+      return safeReturn(getPublished(doc), "published");
     case "url":
-      let url = $("link[rel='shortLinkUrl']")?.href || "";
-      if (!url) log_parsing_error("url");
-      return url;
+      return safeReturn(getShortUrl(doc), "url");
     case "thumbnail":
-      let thumbnail = $("link[rel='shortLinkUrl']")?.href || "";
-      if (!thumbnail) {
-        log_parsing_error("thumbnail");
-        return thumbnail;
-      } else {
-        return thumbnail
-          .replace(/youtu.be/, "img.youtube.com/vi")
-          .concat("/maxresdefault.jpg");
-      }
+      return safeReturn(getThumbnail(doc), "thumbnail");
     case "keywords":
-      let _keywords = keywords(doc);
-      if (!_keywords) log_parsing_error("keywords");
-      return _keywords;
+      return safeReturn(getKeywords(doc), "keywords");
     case "keywordsQ":
-      // Quotes
-      let keywordsQ = keywords(doc);
-      if (!keywordsQ) log_parsing_error("keywords");
-      return keywordsQ ? `"${keywordsQ.replace(/, /g, '", "')}"` : keywordsQ;
+      return formatQuote(getKeywords(doc), "keywords");
     case "keywordsL":
-      // List
-      let keywordsL = keywords(doc);
-      if (!keywordsL) log_parsing_error("keywords");
-      return keywordsL ? "\n- " + keywordsL.replace(/, /g, "\n- ") : keywordsL;
+      return formatList(getKeywords(doc), "keywords");
     case "keywordsW":
-      // Wiki links
-      let keywordsW = keywords(doc);
-      if (!keywordsW) log_parsing_error("keywords");
-      return keywordsW
-        ? `[[${keywordsW.replace(/, /g, "]], [[")}]]`
-        : keywordsW;
+      return formatLink(getKeywords(doc), "keywords");
     case "duration":
-      let duration = $("meta[itemprop='duration']")?.content.slice(2) || "";
-      if (!duration) log_parsing_error("duration");
-      return duration.replace(/M/gi, "m ").replace(/S/gi, "s");
+      return safeReturn(getDuration(doc), "duration");
     case "description":
-      let description = $("meta[itemprop='description']")?.content || "";
-      if (!description) log_parsing_error("description");
-      return description.replace(/"/g, "'");
+      return safeReturn(getDescription(doc), "description");
     case "descriptionFull":
-      let html = new XMLSerializer().serializeToString(doc);
-      let descriptionFull =
-        html?.match(/"shortDescription":".*?","isCrawlable":/) || "";
-      if (!descriptionFull) {
-        log_parsing_error("descriptionFull");
-        return descriptionFull;
-      } else {
-        return descriptionFull
-          .toString()
-          .replace(/"shortDescription":"/, "")
-          .replace(/","isCrawlable":$/, "")
-          .replace(/\\u0026/g, "&")
-          .replace(/\\n/g, "\n")
-          .replace(/\\r/g, "")
-          .replace(/\\"/g, '"');
-      }
+      return safeReturn(getDescriptionFull(doc), "descriptionFull");
     case "id":
-      let id = $("meta[itemprop='identifier']")?.content || "";
-      if (!id) log_parsing_error("id");
-      return id;
+      return safeReturn(getId(doc), "id");
     default:
       new Notice("Incorrect parameter: " + value, 5000);
+      return "";
   }
+}
+
+// --- Individual data extractors ---
+
+function getTitle(doc) {
+  const title = doc.querySelector("meta[property='og:title']")?.content || "";
+  return title.replace(/"/g, "'");
+}
+
+function getChannel(doc) {
+  return doc.querySelector("link[itemprop='name']")?.getAttribute("content") || "";
+}
+
+function getPublished(doc) {
+  return doc.querySelector("meta[itemprop='uploadDate']")?.content || "";
+}
+
+function getShortUrl(doc) {
+  return doc.querySelector("link[rel='shortLinkUrl']")?.href || "";
+}
+
+function getThumbnail(doc) {
+  const shortUrl = getShortUrl(doc);
+  return shortUrl
+    ? shortUrl.replace(/youtu\.be/, "img.youtube.com/vi") + "/maxresdefault.jpg"
+    : "";
+}
+
+function getKeywords(doc) {
+  return doc.querySelector("meta[name='keywords']")?.content || "";
+}
+
+function getDuration(doc) {
+  let duration = doc.querySelector("meta[itemprop='duration']")?.content || "";
+  if (duration.startsWith("PT")) duration = duration.slice(2);
+  return duration.replace(/M/gi, "m ").replace(/S/gi, "s");
+}
+
+function getDescription(doc) {
+  const desc = doc.querySelector("meta[itemprop='description']")?.content || "";
+  return desc.replace(/"/g, "'");
+}
+
+function getDescriptionFull(doc) {
+  const html = new XMLSerializer().serializeToString(doc);
+  const match = html.match(/"shortDescription":"(.*?)","isCrawlable":/);
+  if (!match) return "";
+  return match[1]
+    .replace(/\\u0026/g, "&")
+    .replace(/\\n/g, "\n")
+    .replace(/\\r/g, "")
+    .replace(/\\"/g, '"');
+}
+
+function getId(doc) {
+  return doc.querySelector("meta[itemprop='identifier']")?.content || "";
+}
+
+// --- Helpers ---
+
+function safeReturn(result, name) {
+  if (!result) log_parsing_error(name);
+  return result || "";
+}
+
+function formatQuote(value, name) {
+  if (!value) log_parsing_error(name);
+  return value ? `"${value.replace(/, /g, '", "')}"` : "";
+}
+
+function formatList(value, name) {
+  if (!value) log_parsing_error(name);
+  return value ? `\n- ${value.replace(/, /g, "\n- ")}` : "";
+}
+
+function formatLink(value, name) {
+  if (!value) log_parsing_error(name);
+  return value ? `[[${value.replace(/, /g, "]], [[")}]]` : "";
 }
 
 function isValidHttpUrl(string) {
-  let url;
-
   try {
-    url = new URL(string);
+    let url = new URL(string);
+    return url.protocol === "http:" || url.protocol === "https:";
   } catch (_) {
     return false;
   }
-
-  return url.protocol === "http:" || url.protocol === "https:";
 }
 
 function log_parsing_error(variable) {
-  console.error(
-    `Parsing Error: Couldn't get the ${variable}. If it happens consistently, consider opening an issue on GitHub.`,
-  );
-}
-
-function keywords(doc) {
-  return doc.querySelector("meta[name='keywords']")?.content || "";
+  console.error(`Parsing Error: Couldn't get ${variable}. If it happens consistently, consider opening an issue on GitHub.`);
 }
 
 module.exports = youtube;
