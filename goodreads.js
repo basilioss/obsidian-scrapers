@@ -12,113 +12,127 @@ async function goodreads(value, tp, doc) {
     doc = p.parseFromString(page, "text/html");
   }
 
-  function extractData(doc) {
-    let scriptTag = doc.querySelector('script[type="application/ld+json"]');
-    return scriptTag ? JSON.parse(scriptTag.textContent) : {};
-  }
-
-  let data = extractData(doc);
-  let $ = (s) => doc.querySelector(s);
+  const data = extractData(doc);
+  const $ = (selector) => doc.querySelector(selector);
 
   switch (value) {
     case "url":
-      return $("link[rel='canonical']")?.href || "";
+      return safeReturn(getUrl(doc), "url");
     case "title":
-      let title = $('.BookPageTitleSection .Text__title1')?.innerText || ""
-      return title.trim().replace(/&amp;/g, "&");
+      return safeReturn(getTitle(doc), "title");
     case "authors":
-      return extractAuthors(data);
+      return safeReturn(getAuthors(data), "authors");
     case "authorsQ":
-      let authorsQ = extractAuthors(data);
-      return !authorsQ ? "" : `"${authorsQ.replace(/, /g, '", "')}"`;
+      return formatQuote(getAuthors(data), "authors");
     case "authorsL":
-      let authorsL = extractAuthors(data);
-      return !authorsL ? "" : `\n- ${authorsL.replace(/, /g, "\n- ")}`;
+      return formatList(getAuthors(data), "authors");
     case "authorsW":
-      let authorsW = extractAuthors(data);
-      return !authorsW ? "" : `[[${authorsW.replace(/, /g, "]], [[")}]]`;
+      return formatLink(getAuthors(data), "authors");
     case "isbn":
-      return data?.isbn || "";
+      return safeReturn(data?.isbn, "isbn");
     case "published":
-      return extractPubDate(doc);
+      return safeReturn(getPublished(doc), "published");
     case "genres":
-      return extractGenres(doc);
+      return safeReturn(getGenres(doc), "genres");
     case "genresQ":
-      let genresQ = extractGenres(doc);
-      return !genresQ ? "" : `"${genresQ.replace(/, /g, '", "')}"`;
+      return formatQuote(getGenres(doc), "genres");
     case "genresL":
-      let genresL = extractGenres(doc);
-      return !genresL ? "" : `\n- ${genresL.replace(/, /g, "\n- ")}`;
+      return formatList(getGenres(doc), "genres");
     case "genresW":
-      let genresW = extractGenres(doc);
-      return !genresW ? "" : `[[${genresW.replace(/, /g, "]], [[")}]]`;
+      return formatLink(getGenres(doc), "genres");
     case "cover":
-     return (data?.image || "").replace(/\?.*$/g, "");
+      return safeReturn(getCover(data), "cover");
     case "pageCount":
-      return data?.numberOfPages || "";
+      return safeReturn(data?.numberOfPages, "pageCount");
     case "description":
-      return extractBookDescription(doc);
+      return safeReturn(getDescription(doc), "description");
     case "rating":
-      return extractRatingValue(data);
+      return safeReturn(data?.aggregateRating?.ratingValue, "rating");
     default:
       new Notice("Incorrect parameter: " + value, 5000);
+      return "";
   }
 }
 
-function isValidHttpUrl(string) {
-  let url;
+// --- Individual data extractors ---
 
-  try {
-    url = new URL(string);
-  } catch (_) {
-    return false;
-  }
-
-  return url.protocol === "http:" || url.protocol === "https:";
+function extractData(doc) {
+  const scriptTag = doc.querySelector('script[type="application/ld+json"]');
+  return scriptTag ? JSON.parse(scriptTag.textContent) : {};
 }
 
-function extractAuthors(data) {
-  let authors = data.author;
-  return !authors || authors.length === 0 ? "" :
-    Array.from(authors, (authors) => authors.name.replace(/ +(?= )/g, "")).join(", ");
+function getUrl(doc) {
+  return doc.querySelector("link[rel='canonical']")?.href || "";
 }
 
-function extractGenres(doc) {
-  let $$ = (s) => doc.querySelectorAll(s);
-  let genreElements = $$('.BookPageMetadataSection__genreButton .Button__labelItem');
+function getTitle(doc) {
+  const title = doc.querySelector(".BookPageTitleSection .Text__title1")?.innerText || "";
+  return title.trim().replace(/&amp;/g, "&");
+}
+
+function getAuthors(data) {
+  const authors = data.author;
+  return !authors || authors.length === 0
+    ? ""
+    : Array.from(authors, (a) => a.name.trim().replace(/ +(?= )/g, "")).join(", ");
+}
+
+function getPublished(doc) {
+  const pubInfo = doc.querySelector('p[data-testid="publicationInfo"]');
+  if (!pubInfo) return "";
+  const match = pubInfo.innerHTML.match(/First published\s(.*)/);
+  return match ? match[1].trim() : "";
+}
+
+function getGenres(doc) {
+  const genreElements = doc.querySelectorAll('.BookPageMetadataSection__genreButton .Button__labelItem');
   if (!genreElements || genreElements.length === 0) return "";
-
-  let genres = Array.from(genreElements, (el) => el.textContent);
-  return [...new Set(genres)].join(", ");  // Remove duplicates
-}
-
-function extractGenres(doc) {
-  let genreElements = doc.querySelectorAll('.BookPageMetadataSection__genreButton .Button__labelItem');
-  if (!genreElements || genreElements.length === 0) return "";
-
-  let genres = Array.from(genreElements, (el) => el.textContent);
+  const genres = Array.from(genreElements, (el) => el.textContent.trim());
   return [...new Set(genres)].join(", ");
 }
 
-function extractPubDate(doc) {
-  let publicationInfo = doc.querySelector('p[data-testid="publicationInfo"]');
-  if (!publicationInfo) {
-    return '';
+function getCover(data) {
+  return (data?.image || "").replace(/\?.*$/g, "");
+}
+
+function getDescription(doc) {
+  const desc = doc.querySelector('.BookPageMetadataSection__description .Formatted');
+  return desc ? desc.textContent.trim() : "";
+}
+
+// --- Helpers ---
+
+function safeReturn(result, name) {
+  if (!result) log_parsing_error(name);
+  return result || "";
+}
+
+function formatQuote(value, name) {
+  if (!value) log_parsing_error(name);
+  return value ? `"${value.replace(/, /g, '", "')}"` : "";
+}
+
+function formatList(value, name) {
+  if (!value) log_parsing_error(name);
+  return value ? `\n- ${value.replace(/, /g, "\n- ")}` : "";
+}
+
+function formatLink(value, name) {
+  if (!value) log_parsing_error(name);
+  return value ? `[[${value.replace(/, /g, "]], [[")}]]` : "";
+}
+
+function isValidHttpUrl(string) {
+  try {
+    const url = new URL(string);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch (_) {
+    return false;
   }
-  let dateString = publicationInfo.innerHTML.match(/First published\s(.*)/);
-  return dateString ? dateString[1] : '';
 }
 
-function extractRatingValue(data) {
-  let ratingValue = data.aggregateRating && data.aggregateRating.ratingValue;
-  return ratingValue || "";
-}
-
-function extractBookDescription(doc) {
-  let $ = (s) => doc.querySelector(s);
-  let descriptionTag = $('.BookPageMetadataSection__description .Formatted');
-  if (!descriptionTag) return "";
-  return descriptionTag.textContent.trim();
+function log_parsing_error(variable) {
+  console.error(`Parsing Error: Couldn't get ${variable}. If it happens consistently, consider opening an issue on GitHub.`);
 }
 
 module.exports = goodreads;
