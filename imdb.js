@@ -109,7 +109,8 @@ async function imdb(value, tp, doc) {
       let countriesW = countries(doc);
       return "[[" + countriesW.replace(/, /g, "]], [[") + "]]";
     case "url":
-      return "https://www.imdb.com" + json.url;
+      let imdbUrl = json.url.startsWith("https://") ? json.url : "https://www.imdb.com" + json.url;
+      return imdbUrl;
     default:
       new Notice("Incorrect parameter: " + value, 5000);
   }
