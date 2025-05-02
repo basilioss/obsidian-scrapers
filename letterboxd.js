@@ -99,7 +99,7 @@ async function letterboxd(value, tp, doc) {
       let imdbUrl = $("a[data-track-action='IMDb']")?.href || "";
       return imdbUrl.replace(/\/maindetails/, "");
     case "tmdbUrl":
-      return $("a[data-track-action='TMDb']").href || "";
+      return $("a[data-track-action='TMDB']").href || "";
     case "languages":
       return languages(doc);
     case "languagesQ":
