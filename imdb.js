@@ -12,178 +12,122 @@ async function imdb(value, tp, doc) {
     doc = p.parseFromString(page, "text/html");
   }
 
-  let json = JSON.parse(
-    doc.querySelector("script[type='application/ld+json']").innerHTML
-  );
+  const $ = (selector) => doc.querySelector(selector);
+
+  let json;
+  try {
+    let script = $("script[type='application/ld+json']")?.innerText ?? "";
+    json = JSON.parse(script);
+  } catch (err) {
+    console.warn("Warning: Failed to parse JSON-LD metadata. Proceeding without JSON data.");
+    json = null; // allow fallback functions to run
+  }
 
   switch (value) {
     case "title":
-      return title(json);
+      return safeReturn(getTitle(json), "title");
     case "image":
-      return image(json);
+      return safeReturn(json?.image, "image");
     case "published":
-      let datePublished = "";
-      if (json.datePublished != null) {
-        datePublished = JSON.stringify(json.datePublished).substring(1, 5);
-      } else {
-        datePublished = doc.querySelector("a[href*='releaseinfo']").innerText
-      }
-      return datePublished;
+      return safeReturn(getPublished(json, doc), "published");
     case "keywords":
-      return keywords(json);
+      return safeReturn(getKeywords(json), "keywords");
     case "keywordsQ":
-      // Quotes
-      let keywordsQ = keywords(json);
-      return '"' + keywordsQ.replace(/, /g, '", "') + '"';
+      return formatQuote(getKeywords(json), "keywords");
     case "keywordsL":
-      // List
-      let keywordsL = keywords(json);
-      return "\n- " + keywordsL.replace(/, /g, "\n- ");
+      return formatList(getKeywords(json), "keywords");
     case "keywordsW":
-      // Wiki links
-      let keywordsW = keywords(json);
-      return "[[" + keywordsW.replace(/, /g, "]], [[") + "]]";
+      return formatLink(getKeywords(json), "keywords");
     case "directors":
-      return directors(json);
+      return safeReturn(getDirectors(json), "directors");
     case "directorsQ":
-      let directorsQ = directors(json);
-      return '"' + directorsQ.replace(/, /g, '", "') + '"';
+      return formatQuote(getDirectors(json), "directors");
     case "directorsL":
-      let directorsL = directors(json);
-      return "\n- " + directorsL.replace(/, /g, "\n- ");
+      return formatList(getDirectors(json), "directors");
     case "directorsW":
-      let directorsW = directors(json);
-      return "[[" + directorsW.replace(/, /g, "]], [[") + "]]";
+      return formatLink(getDirectors(json), "directors");
     case "creators":
-      return creators(json);
+      return safeReturn(getCreators(json), "creators");
     case "creatorsQ":
-      let creatorsQ = creators(json);
-      return '"' + creatorsQ.replace(/, /g, '", "') + '"';
+      return formatQuote(getCreators(json), "creators");
     case "creatorsL":
-      let creatorsL = creators(json);
-      return "\n- " + creatorsL.replace(/, /g, "\n- ");
+      return formatList(getCreators(json), "creators");
     case "creatorsW":
-      let creatorsW = creators(json);
-      return "[[" + creatorsW.replace(/, /g, "]], [[") + "]]";
+      return formatLink(getCreators(json), "creators");
     case "duration":
-      return duration(json);
+      return safeReturn(getDuration(json), "duration");
     case "description":
-      return doc.querySelector("span[data-testid='plot-xl']").innerText;
+      return safeReturn(getDescription(doc), "description");
     case "type":
-      return type(json);
+      return safeReturn(getType(json), "type");
     case "contentRating":
-      return json?.contentRating || "";
+      return safeReturn(json?.contentRating, "contentRating");
     case "genres":
-      return genres(json);
+      return safeReturn(getGenres(json), "genres");
     case "genresQ":
-      let genresQ = genres(json);
-      return '"' + genresQ.replace(/, /g, '", "') + '"';
+      return formatQuote(getGenres(json), "genres");
     case "genresL":
-      let genresL = genres(json);
-      return "\n- " + genresL.replace(/, /g, "\n- ");
+      return formatList(getGenres(json), "genres");
     case "genresW":
-      let genresW = genres(json);
-      return "[[" + genresW.replace(/, /g, "]], [[") + "]]";
+      return formatLink(getGenres(json), "genres");
     case "stars":
-      return stars(json);
+      return safeReturn(getStars(json), "stars");
     case "starsQ":
-      let starsQ = stars(json);
-      return '"' + starsQ.replace(/, /g, '", "') + '"';
+      return formatQuote(getStars(json), "stars");
     case "starsL":
-      let starsL = stars(json);
-      return "\n- " + starsL.replace(/, /g, "\n- ");
+      return formatList(getStars(json), "stars");
     case "starsW":
-      let starsW = stars(json);
-      return "[[" + starsW.replace(/, /g, "]], [[") + "]]";
+      return formatLink(getStars(json), "stars");
     case "imdbRating":
-      return json.aggregateRating?.ratingValue || "";
+      return safeReturn(json?.aggregateRating?.ratingValue, "imdbRating")
     case "countries":
-      return countries(doc);
+      return safeReturn(getCountries(doc), "countries");
     case "countriesQ":
-      let countriesQ = countries(doc);
-      return '"' + countriesQ.replace(/, /g, '", "') + '"';
+      return formatQuote(getCountries(doc), "countries");
     case "countriesL":
-      let countriesL = countries(doc);
-      return "\n- " + countriesL.replace(/, /g, "\n- ");
+      return formatList(getCountries(doc), "countries");
     case "countriesW":
-      let countriesW = countries(doc);
-      return "[[" + countriesW.replace(/, /g, "]], [[") + "]]";
+      return formatLink(getCountries(doc), "countries");
     case "url":
-      let imdbUrl = json.url.startsWith("https://") ? json.url : "https://www.imdb.com" + json.url;
-      return imdbUrl;
+      return safeReturn(getUrl(json), "url");
     default:
       new Notice("Incorrect parameter: " + value, 5000);
+      return "";
   }
 }
 
-function isValidHttpUrl(string) {
-  let url;
+// --- Data extractors ---
 
-  try {
-    url = new URL(string);
-  } catch (_) {
-    return false;
-  }
-
-  return url.protocol === "http:" || url.protocol === "https:";
+function getTitle(json) {
+  let title = json?.alternateName ?? json?.name ?? "";
+  return title.replace(/&apos;/g, "'");
 }
 
-function title(json) {
-  let title = "";
-  if (json.alternateName != null) {
-    title = json.alternateName.replace(/&apos;/g, "'");
-  } else {
-    title = json.name.replace(/&apos;/g, "'");
+function getPublished(json, doc) {
+  if (json?.datePublished) {
+    return json.datePublished.substring(0, 4);
   }
-  return title;
+  return doc.querySelector("a[href*='releaseinfo']")?.innerText || "";
 }
 
-function image(json) {
-  let image = "";
-  if (json.image != null) {
-    image = json.image;
-  }
-  return image;
+function getKeywords(json) {
+  if (!json?.keywords) return "";
+  return json.keywords.toLowerCase().replace(/,/g, ", ");
 }
 
-function keywords(json) {
-  let keywords = "";
-  if (json.keywords != null) {
-    keywords = JSON.stringify(json.keywords);
-    keywords = keywords.toLowerCase().replace(/,/g, ", ").replace(/"/g, "");
-  }
-  return keywords;
+function getDirectors(json) {
+  if (!json?.director) return "";
+  return json.director.map((d) => d.name).filter(Boolean).join(", ");
 }
 
-function directors(json) {
-  let directors = "";
-  if (json.director != null) {
-    directors = json.director.map((director) => director.name);
-    directors = JSON.stringify(directors)
-      .replace(/null,?/g, "")
-      .replace(/","/g, ", ")
-      .replace(/\["/g, "")
-      .replace(/\"]/, "");
-  }
-  return directors;
+function getCreators(json) {
+  if (!json?.creator) return "";
+  return json.creator.map((c) => c.name).filter(Boolean).join(", ");
 }
 
-function creators(json) {
-  let creators = "";
-  if (json.creator != null) {
-    creators = json.creator.map((creator) => creator.name);
-    creators = JSON.stringify(creators)
-      .replace(/null,?/g, "")
-      .replace(/","/g, ", ")
-      .replace(/\["/g, "")
-      .replace(/\"]/, "");
-  }
-  return creators;
-}
-
-function duration(json) {
+function getDuration(json) {
   let duration = "";
-  if (json.duration != null) {
+  if (json?.duration != null) {
     duration = JSON.stringify(json.duration).toLowerCase();
     duration = duration
       .replace(/"pt/, "")
@@ -193,15 +137,12 @@ function duration(json) {
   return duration;
 }
 
-function type(json) {
-  type = JSON.stringify(json["@type"])
-    .replace(/TV/, "")
-    .replace(/"/g, "")
-    .toLowerCase();
-  return type;
+function getType(json) {
+  return json?.["@type"]?.toLowerCase().replace(/tv/i, "") || "";
 }
 
-function genres(json) {
+function getGenres(json) {
+  if (!json?.genre) return "";
   return JSON.stringify(json.genre)
     .toLowerCase()
     .replace(/","/g, ", ")
@@ -209,19 +150,58 @@ function genres(json) {
     .replace(/\"]/, "");
 }
 
-function stars(json) {
-  return JSON.stringify(json.actor.map((actor) => actor.name))
-    .replace(/","/g, ", ")
-    .replace(/\["/g, "")
-    .replace(/\"]/, "");
+function getStars(json) {
+  if (!json?.actor) return "";
+  return json.actor.map((a) => a.name).join(", ");
 }
 
-function countries(doc) {
+function getCountries(doc) {
   let countries = doc.querySelectorAll("a[href*='country_of_origin']");
-  countries = Array.from(countries, (countries) => countries.textContent).join(
-    ", "
-  );
-  return countries;
+  return Array.from(countries, (countries) => countries.textContent).join(", ");
+}
+
+function getDescription(doc) {
+  return doc.querySelector("span[data-testid='plot-xl']")?.innerText || "";
+}
+
+function getUrl(json) {
+  if (!json?.url) return "";
+  return json.url.startsWith("http") ? json.url : "https://www.imdb.com" + json.url;
+}
+
+// --- Helpers ---
+
+function safeReturn(result, name) {
+  if (!result) logParsingError(name);
+  return result || "";
+}
+
+function formatQuote(value, name) {
+  if (!value) logParsingError(name);
+  return value ? `"${value.replace(/, /g, '", "')}"` : "";
+}
+
+function formatList(value, name) {
+  if (!value) logParsingError(name);
+  return value ? `\n- ${value.replace(/, /g, "\n- ")}` : "";
+}
+
+function formatLink(value, name) {
+  if (!value) logParsingError(name);
+  return value ? `[[${value.replace(/, /g, "]], [[")}]]` : "";
+}
+
+function logParsingError(name) {
+  console.error(`Parsing Error: Couldn't get ${name}. If it happens consistently, consider opening an issue.`);
+}
+
+function isValidHttpUrl(string) {
+  try {
+    let url = new URL(string);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch (_) {
+    return false;
+  }
 }
 
 module.exports = imdb;
