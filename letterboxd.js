@@ -189,8 +189,9 @@ function getImdbUrl(doc) {
 }
 
 function getAltTitle(doc) {
-  let alt = doc.querySelector("section[id='featured-film-header'] em")?.innerText || "";
-  return alt.replace(/[‘’]/g, "").replace(/"/g, "”");
+  // let alt = doc.querySelector("section[id='featured-film-header'] em")?.innerText || "";
+  let altTitle = doc.querySelector("h2.originalname em")?.innerText || "";
+  return altTitle.replace(/[‘’]/g, "").replace(/"/g, "”");
 }
 
 // --- Helpers ---
