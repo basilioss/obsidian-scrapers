@@ -53,7 +53,7 @@ async function youtube(value, tp, doc) {
   }
 }
 
-// --- Individual data extractors ---
+// --- Data extractors ---
 
 function getTitle(doc) {
   const title = doc.querySelector("meta[property='og:title']")?.content || "";
@@ -112,22 +112,22 @@ function getId(doc) {
 // --- Helpers ---
 
 function safeReturn(result, name) {
-  if (!result) log_parsing_error(name);
+  if (!result) logParsingError(name);
   return result || "";
 }
 
 function formatQuote(value, name) {
-  if (!value) log_parsing_error(name);
+  if (!value) logParsingError(name);
   return value ? `"${value.replace(/, /g, '", "')}"` : "";
 }
 
 function formatList(value, name) {
-  if (!value) log_parsing_error(name);
+  if (!value) logParsingError(name);
   return value ? `\n- ${value.replace(/, /g, "\n- ")}` : "";
 }
 
 function formatLink(value, name) {
-  if (!value) log_parsing_error(name);
+  if (!value) logParsingError(name);
   return value ? `[[${value.replace(/, /g, "]], [[")}]]` : "";
 }
 
@@ -140,7 +140,7 @@ function isValidHttpUrl(string) {
   }
 }
 
-function log_parsing_error(variable) {
+function logParsingError(variable) {
   console.error(`Parsing Error: Couldn't get ${variable}. If it happens consistently, consider opening an issue on GitHub.`);
 }
 
