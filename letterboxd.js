@@ -29,98 +29,171 @@ async function letterboxd(value, tp, doc) {
 
   switch (value) {
     case "image":
-      return safeReturn(image(json), "image");
+      return safeReturn(getImage(json), "image");
     case "directors":
-      return safeReturn(directors(json), "directors");
+      return safeReturn(getDirectors(json), "directors");
     case "directorsQ":
-      return formatQuote(directors(json), "directors");
+      return formatQuote(getDirectors(json), "directors");
     case "directorsL":
-      return formatList(directors(json), "directors");
+      return formatList(getDirectors(json), "directors");
     case "directorsW":
-      return formatLink(directors(json), "directors");
+      return formatLink(getDirectors(json), "directors");
     case "studios":
-      return safeReturn(studios(json), "studios");
+      return safeReturn(getStudios(json), "studios");
     case "studiosQ":
-      return formatQuote(studios(json), "studios");
+      return formatQuote(getStudios(json), "studios");
     case "studiosL":
-      return formatList(studios(json), "studios");
+      return formatList(getStudios(json), "studios");
     case "studiosW":
-      return formatLink(studios(json), "studios");
+      return formatLink(getStudios(json), "studios");
     case "published":
       return safeReturn(json?.releasedEvent?.[0]?.startDate, "published");
     case "url":
       return safeReturn(json?.url, "url");
     case "cast":
-      return safeReturn(cast(json), "cast");
+      return safeReturn(getCast(json), "cast");
     case "castQ":
-      return formatQuote(cast(json), "cast");
+      return formatQuote(getCast(json), "cast");
     case "castL":
-      return formatList(cast(json), "cast");
+      return formatList(getCast(json), "cast");
     case "castW":
-      return formatLink(cast(json), "cast");
+      return formatLink(getCast(json), "cast");
     case "castShort":
-      return safeReturn(castShort(json), "castShort");
+      return safeReturn(getCastShort(json), "castShort");
     case "castShortQ":
-      return formatQuote(castShort(json), "castShort");
+      return formatQuote(getCastShort(json), "castShort");
     case "castShortL":
-      return formatList(castShort(json), "castShort");
+      return formatList(getCastShort(json), "castShort");
     case "castShortW":
-      return formatLink(castShort(json), "castShort");
+      return formatLink(getCastShort(json), "castShort");
     case "title":
       return safeReturn(json?.name?.replace(/"/g, "”"), "title");
     case "genres":
-      return safeReturn(genres(json), "genres");
+      return safeReturn(getGenres(json), "genres");
     case "genresQ":
-      return formatQuote(genres(json), "genres");
+      return formatQuote(getGenres(json), "genres");
     case "genresL":
-      return formatList(genres(json), "genres");
+      return formatList(getGenres(json), "genres");
     case "genresW":
-      return formatLink(genres(json), "genres");
+      return formatLink(getGenres(json), "genres");
     case "countries":
-      return safeReturn(countries(json), "countries");
+      return safeReturn(getCountries(json), "countries");
     case "countriesQ":
-      return formatQuote(countries(json), "countries");
+      return formatQuote(getCountries(json), "countries");
     case "countriesL":
-      return formatList(countries(json), "countries");
+      return formatList(getCountries(json), "countries");
     case "countriesW":
-      return formatLink(countries(json), "countries");
+      return formatLink(getCountries(json), "countries");
     case "rating":
       return safeReturn(json?.aggregateRating?.ratingValue, "rating");
     case "description":
       return safeReturn($("meta[name='description']")?.content, "description");
     case "imdbUrl":
-      let imdb = $("a[data-track-action='IMDb']")?.href;
-      imdb = imdb ? imdb.replace(/\/maindetails/, "") : "";
-      return safeReturn(imdb, "imdbUrl");
+      return safeReturn(getImdbUrl(doc), "imdbUrl");
     case "tmdbUrl":
       return safeReturn($("a[data-track-action='TMDB']")?.href, "tmdbUrl");
     case "languages":
-      return safeReturn(languages(doc), "languages");
+      return safeReturn(getLanguages(doc), "languages");
     case "languagesQ":
-      return formatQuote(languages(doc), "languages");
+      return formatQuote(getLanguages(doc), "languages");
     case "languagesL":
-      return formatList(languages(doc), "languages");
+      return formatList(getLanguages(doc), "languages");
     case "languagesW":
-      return formatLink(languages(doc), "languages");
+      return formatLink(getLanguages(doc), "languages");
     case "writers":
-      return safeReturn(writers(doc), "writers");
+      return safeReturn(getWriters(doc), "writers");
     case "writersQ":
-      return formatQuote(writers(doc), "writers");
+      return formatQuote(getWriters(doc), "writers");
     case "writersL":
-      return formatList(writers(doc), "writers");
+      return formatList(getWriters(doc), "writers");
     case "writersW":
-      return formatLink(writers(doc), "writers");
+      return formatLink(getWriters(doc), "writers");
     case "runtime":
-      return safeReturn(runtime(doc), "runtime");
+      return safeReturn(getRuntime(doc), "runtime");
     case "altTitle":
-      let alt = $("section[id='featured-film-header'] em")?.innerText || "";
-      alt = alt.replace(/[‘’]/g, "").replace(/"/g, "”");
-      return safeReturn(alt, "altTitle");
+      return safeReturn(getAltTitle(doc), "altTitle");
     default:
       new Notice("Incorrect parameter: " + value, 5000);
       return "";
   }
 }
+
+// --- Data Extractors ---
+
+function getImage(json) {
+  return (json?.image || "").replace(/\?.*$/, "");
+}
+
+function getDirectors(json) {
+  if (json?.director) {
+    return json.director.map((d) => d.name).join(", ");
+  }
+  return "";
+
+}
+
+function getStudios(json) {
+  if (json?.productionCompany) {
+    return json.productionCompany.map((s) => s.name).join(", ");
+  }
+  return "";
+}
+
+function getCast(json) {
+  if (json?.actors) {
+    return json.actors.map((a) => a.name).join(", ");
+  }
+  return "";
+}
+
+function getCastShort(json, n = 5) {
+  let _cast = getCast(json);
+  if (!_cast) return "";
+  return _cast.split(", ").slice(0, n).join(", ");
+}
+
+function getGenres(json) {
+  return Array.isArray(json?.genre) ? json.genre.join(", ").toLowerCase() : (json?.genre || "").toLowerCase();
+}
+
+function getCountries(json) {
+  if (json?.countryOfOrigin) {
+    return json.countryOfOrigin.map((c) => c.name).join(", ");
+  }
+  return "";
+}
+
+function getLanguages(doc) {
+  let languages = doc.querySelectorAll("a[href^='/films/language/']");
+  languages = Array.from(languages, (languages) => languages.textContent);
+  languages = [...new Set(languages)]; // Remove duplicates
+  return languages.join(", ");
+}
+
+function getWriters(doc) {
+  let writers = doc.querySelectorAll("a[href^='/writer/']");
+  return Array.from(writers, (writers) => writers.textContent).join(", ");
+}
+
+function getRuntime(doc) {
+  let runtime = doc.querySelector("p[class*='text-link']")?.innerText || "";
+  // Remove new lines
+  runtime = runtime.replace(/(\r\n|\n|\r)/gm, "").trim();
+  runtime = runtime.substring(0, runtime.indexOf(" ")).replace(/\smins/, "");
+  return runtime;
+}
+
+function getImdbUrl(doc) {
+  let imdb = doc.querySelector("a[data-track-action='IMDb']")?.href;
+  return imdb ? imdb.replace(/\/maindetails/, "") : "";
+}
+
+function getAltTitle(doc) {
+  let alt = doc.querySelector("section[id='featured-film-header'] em")?.innerText || "";
+  return alt.replace(/[‘’]/g, "").replace(/"/g, "”");
+}
+
+// --- Helpers ---
 
 function isValidHttpUrl(string) {
   try {
@@ -131,91 +204,28 @@ function isValidHttpUrl(string) {
   }
 }
 
-function log_parsing_error(variable) {
-  console.error(`Parsing Error: Couldn't get ${variable}. If it happens consistently, consider opening an issue on GitHub.`);
+function logParsingError(variable) {
+  console.error(`Parsing Error: Couldn't get ${variable}. If it happens consistently, consider opening an issue.`);
 }
 
 function safeReturn(result, name) {
-  if (!result) log_parsing_error(name);
+  if (!result) logParsingError(name);
   return result || "";
 }
 
 function formatQuote(value, name) {
-  if (!value) log_parsing_error(name);
+  if (!value) logParsingError(name);
   return value ? `"${value.replace(/, /g, '", "')}"` : "";
 }
 
 function formatList(value, name) {
-  if (!value) log_parsing_error(name);
+  if (!value) logParsingError(name);
   return value ? `\n- ${value.replace(/, /g, "\n- ")}` : "";
 }
 
 function formatLink(value, name) {
-  if (!value) log_parsing_error(name);
+  if (!value) logParsingError(name);
   return value ? `[[${value.replace(/, /g, "]], [[")}]]` : "";
-}
-
-function image(json) {
-  return (json?.image || "").replace(/\?.*$/, "");
-}
-
-function directors(json) {
-  if (json?.director) {
-    return json.director.map((d) => d.name).join(", ");
-  }
-  return "";
-}
-
-function studios(json) {
-  if (json?.productionCompany) {
-    return json.productionCompany.map((s) => s.name).join(", ");
-  }
-  return "";
-}
-
-function cast(json) {
-  if (json?.actors) {
-    return json.actors.map((a) => a.name).join(", ");
-  }
-  return "";
-}
-
-function castShort(json, n = 5) {
-  let _cast = cast(json);
-  if (!_cast) return "";
-  return _cast.split(", ").slice(0, n).join(", ");
-}
-
-function genres(json) {
-  return Array.isArray(json?.genre) ? json.genre.join(", ").toLowerCase() : (json?.genre || "").toLowerCase();
-}
-
-function countries(json) {
-  if (json?.countryOfOrigin) {
-    return json.countryOfOrigin.map((c) => c.name).join(", ");
-  }
-  return "";
-}
-
-function languages(doc) {
-  let languages = doc.querySelectorAll("a[href^='/films/language/']");
-  languages = Array.from(languages, (languages) => languages.textContent);
-  languages = [...new Set(languages)]; // Remove duplicates
-  return languages.join(", ");
-}
-
-function writers(doc) {
-  let writers = doc.querySelectorAll("a[href^='/writer/']");
-  writers = Array.from(writers, (writers) => writers.textContent);
-  return writers.join(", ");
-}
-
-function runtime(doc) {
-  let runtime = doc.querySelector("p[class*='text-link']")?.innerText || "";
-  // Remove new lines
-  runtime = runtime.replace(/(\r\n|\n|\r)/gm, "").trim();
-  runtime = runtime.substring(0, runtime.indexOf(" ")).replace(/\smins/, "");
-  return runtime;
 }
 
 module.exports = letterboxd;
