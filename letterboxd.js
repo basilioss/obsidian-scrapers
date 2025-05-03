@@ -112,6 +112,8 @@ async function letterboxd(value, tp, doc) {
       return safeReturn(getRuntime(doc), "runtime");
     case "altTitle":
       return safeReturn(getAltTitle(doc), "altTitle");
+    case "altTitleUTF8":
+      return safeReturn(getAltTitleUTF8(doc), "altTitle");
     default:
       new Notice("Incorrect parameter: " + value, 5000);
       return "";
@@ -192,6 +194,25 @@ function getAltTitle(doc) {
   // let alt = doc.querySelector("section[id='featured-film-header'] em")?.innerText || "";
   let altTitle = doc.querySelector("h2.originalname em")?.innerText || "";
   return altTitle.replace(/[‘’]/g, "").replace(/"/g, "”");
+}
+
+function isUTF8(input) {
+  for (var i = 0; i < input.length; i++) {
+    var temp = input.charCodeAt(i)
+    if (temp > 0xFF) {
+      return false
+    }
+  }
+  return true
+}
+
+function getAltTitleUTF8(doc) {
+  altTitle = getAltTitle(doc);
+  if (!isUTF8(altTitle)) {
+    return "";
+  } else {
+    return altTitle;
+  }
 }
 
 // --- Helpers ---
