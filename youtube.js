@@ -34,10 +34,13 @@ async function youtube(value, tp, doc) {
     case "keywords":
       return safeReturn(getKeywords(doc), "keywords");
     case "keywordsQ":
+    case "keywordsQuotes":
       return formatQuote(getKeywords(doc), "keywords");
     case "keywordsL":
+    case "keywordsList":
       return formatList(getKeywords(doc), "keywords");
     case "keywordsW":
+    case "keywordsLinks":
       return formatLink(getKeywords(doc), "keywords");
     case "duration":
       return safeReturn(getDuration(doc), "duration");

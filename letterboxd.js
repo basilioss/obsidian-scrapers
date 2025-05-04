@@ -33,18 +33,24 @@ async function letterboxd(value, tp, doc) {
     case "directors":
       return safeReturn(getDirectors(json), "directors");
     case "directorsQ":
+    case "directorsQuotes":
       return formatQuote(getDirectors(json), "directors");
     case "directorsL":
+    case "directorsList":
       return formatList(getDirectors(json), "directors");
     case "directorsW":
+    case "directorsLinks":
       return formatLink(getDirectors(json), "directors");
     case "studios":
       return safeReturn(getStudios(json), "studios");
     case "studiosQ":
+    case "studiosQuotes":
       return formatQuote(getStudios(json), "studios");
     case "studiosL":
+    case "studiosList":
       return formatList(getStudios(json), "studios");
     case "studiosW":
+    case "studiosLinks":
       return formatLink(getStudios(json), "studios");
     case "published":
       return safeReturn(json?.releasedEvent?.[0]?.startDate, "published");
@@ -53,36 +59,48 @@ async function letterboxd(value, tp, doc) {
     case "cast":
       return safeReturn(getCast(json), "cast");
     case "castQ":
+    case "castQuotes":
       return formatQuote(getCast(json), "cast");
     case "castL":
+    case "castList":
       return formatList(getCast(json), "cast");
     case "castW":
+    case "castLinks":
       return formatLink(getCast(json), "cast");
     case "castShort":
       return safeReturn(getCastShort(json), "castShort");
     case "castShortQ":
+    case "castShortQuotes":
       return formatQuote(getCastShort(json), "castShort");
     case "castShortL":
+    case "castShortList":
       return formatList(getCastShort(json), "castShort");
     case "castShortW":
+    case "castShortLinks":
       return formatLink(getCastShort(json), "castShort");
     case "title":
       return safeReturn(json?.name?.replace(/"/g, "”"), "title");
     case "genres":
       return safeReturn(getGenres(json), "genres");
     case "genresQ":
+    case "genresQuotes":
       return formatQuote(getGenres(json), "genres");
     case "genresL":
+    case "genresList":
       return formatList(getGenres(json), "genres");
     case "genresW":
+    case "genresLinks":
       return formatLink(getGenres(json), "genres");
     case "countries":
       return safeReturn(getCountries(json), "countries");
     case "countriesQ":
+    case "countriesQuotes":
       return formatQuote(getCountries(json), "countries");
     case "countriesL":
+    case "countriesList":
       return formatList(getCountries(json), "countries");
     case "countriesW":
+    case "countriesLinks":
       return formatLink(getCountries(json), "countries");
     case "rating":
       return safeReturn(json?.aggregateRating?.ratingValue, "rating");
@@ -95,18 +113,24 @@ async function letterboxd(value, tp, doc) {
     case "languages":
       return safeReturn(getLanguages(doc), "languages");
     case "languagesQ":
+    case "languagesQuotes":
       return formatQuote(getLanguages(doc), "languages");
     case "languagesL":
+    case "languagesList":
       return formatList(getLanguages(doc), "languages");
     case "languagesW":
+    case "languagesLinks":
       return formatLink(getLanguages(doc), "languages");
     case "writers":
       return safeReturn(getWriters(doc), "writers");
     case "writersQ":
+    case "writersQuotes":
       return formatQuote(getWriters(doc), "writers");
     case "writersL":
+    case "writersList":
       return formatList(getWriters(doc), "writers");
     case "writersW":
+    case "writersLinks":
       return formatLink(getWriters(doc), "writers");
     case "runtime":
       return safeReturn(getRuntime(doc), "runtime");

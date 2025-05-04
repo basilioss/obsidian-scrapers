@@ -23,10 +23,13 @@ async function goodreads(value, tp, doc) {
     case "authors":
       return safeReturn(getAuthors(data), "authors");
     case "authorsQ":
+    case "authorsQuotes":
       return formatQuote(getAuthors(data), "authors");
     case "authorsL":
+    case "authorsList":
       return formatList(getAuthors(data), "authors");
     case "authorsW":
+    case "authorsLinks":
       return formatLink(getAuthors(data), "authors");
     case "isbn":
       return safeReturn(data?.isbn, "isbn");
@@ -35,10 +38,13 @@ async function goodreads(value, tp, doc) {
     case "genres":
       return safeReturn(getGenres(doc), "genres");
     case "genresQ":
+    case "genresQuotes":
       return formatQuote(getGenres(doc), "genres");
     case "genresL":
+    case "genresList":
       return formatList(getGenres(doc), "genres");
     case "genresW":
+    case "genresLinks":
       return formatLink(getGenres(doc), "genres");
     case "cover":
       return safeReturn(getCover(data), "cover");

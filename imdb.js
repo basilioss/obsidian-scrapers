@@ -33,26 +33,35 @@ async function imdb(value, tp, doc) {
     case "keywords":
       return safeReturn(getKeywords(json), "keywords");
     case "keywordsQ":
+    case "keywordsQuotes":
       return formatQuote(getKeywords(json), "keywords");
     case "keywordsL":
+    case "keywordsList":
       return formatList(getKeywords(json), "keywords");
     case "keywordsW":
+    case "keywordsLinks":
       return formatLink(getKeywords(json), "keywords");
     case "directors":
       return safeReturn(getDirectors(json), "directors");
     case "directorsQ":
+    case "directorsQuotes":
       return formatQuote(getDirectors(json), "directors");
     case "directorsL":
+    case "directorsList":
       return formatList(getDirectors(json), "directors");
     case "directorsW":
+    case "directorsLinks":
       return formatLink(getDirectors(json), "directors");
     case "creators":
       return safeReturn(getCreators(json), "creators");
     case "creatorsQ":
+    case "creatorsQuotes":
       return formatQuote(getCreators(json), "creators");
     case "creatorsL":
+    case "creatorsList":
       return formatList(getCreators(json), "creators");
     case "creatorsW":
+    case "creatorsLinks":
       return formatLink(getCreators(json), "creators");
     case "duration":
       return safeReturn(getDuration(json), "duration");
@@ -65,28 +74,37 @@ async function imdb(value, tp, doc) {
     case "genres":
       return safeReturn(getGenres(json), "genres");
     case "genresQ":
+    case "genresQuotes":
       return formatQuote(getGenres(json), "genres");
     case "genresL":
+    case "genresList":
       return formatList(getGenres(json), "genres");
     case "genresW":
+    case "genresLinks":
       return formatLink(getGenres(json), "genres");
     case "stars":
       return safeReturn(getStars(json), "stars");
     case "starsQ":
+    case "starsQuotes":
       return formatQuote(getStars(json), "stars");
     case "starsL":
+    case "starsList":
       return formatList(getStars(json), "stars");
     case "starsW":
+    case "starsLinks":
       return formatLink(getStars(json), "stars");
     case "imdbRating":
       return safeReturn(json?.aggregateRating?.ratingValue, "imdbRating")
     case "countries":
       return safeReturn(getCountries(doc), "countries");
     case "countriesQ":
+    case "countriesQuotes":
       return formatQuote(getCountries(doc), "countries");
     case "countriesL":
+    case "countriesList":
       return formatList(getCountries(doc), "countries");
     case "countriesW":
+    case "countriesLinks":
       return formatLink(getCountries(doc), "countries");
     case "url":
       return safeReturn(getUrl(json), "url");
