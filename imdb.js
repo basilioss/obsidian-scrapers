@@ -1,3 +1,5 @@
+// source: https://github.com/basilioss/obsidian-scrapers
+
 async function imdb(value, tp, doc) {
   let url = await tp.system.clipboard();
 

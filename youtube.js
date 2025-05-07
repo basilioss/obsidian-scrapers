@@ -1,3 +1,5 @@
+// source: https://github.com/basilioss/obsidian-scrapers
+
 async function youtube(value, tp, doc) {
   let url = await tp.system.clipboard();
 
