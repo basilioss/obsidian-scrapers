@@ -75,7 +75,7 @@ function getUrl(doc) {
 
 function getTitle(doc) {
   const title = doc.querySelector(".BookPageTitleSection .Text__title1")?.innerText || "";
-  return title.trim().replace(/&amp;/g, "&");
+  return title.trim().replace(/&amp;/g, "&").replace(/&apos;/g, "'");
 }
 
 function getAuthors(data) {
