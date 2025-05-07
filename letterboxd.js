@@ -251,7 +251,7 @@ function isValidHttpUrl(string) {
 }
 
 function logParsingError(variable) {
-  console.error(`Parsing Error: Couldn't get ${variable}. If it happens consistently, consider opening an issue.`);
+  console.error(`Parsing Error: Couldn't get ${variable}.`);
 }
 
 function safeReturn(result, name) {

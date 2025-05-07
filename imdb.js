@@ -209,8 +209,8 @@ function formatLink(value, name) {
   return value ? `[[${value.replace(/, /g, "]], [[")}]]` : "";
 }
 
-function logParsingError(name) {
-  console.error(`Parsing Error: Couldn't get ${name}. If it happens consistently, consider opening an issue.`);
+function logParsingError(variable) {
+  console.error(`Parsing Error: Couldn't get ${variable}.`);
 }
 
 function isValidHttpUrl(string) {

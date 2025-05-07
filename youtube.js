@@ -144,7 +144,7 @@ function isValidHttpUrl(string) {
 }
 
 function logParsingError(variable) {
-  console.error(`Parsing Error: Couldn't get ${variable}. If it happens consistently, consider opening an issue on GitHub.`);
+  console.error(`Parsing Error: Couldn't get ${variable}.`);
 }
 
 module.exports = youtube;
