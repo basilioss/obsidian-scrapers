@@ -110,5 +110,5 @@ let filename = title
 // Remove prohibited characters
 filename = filename.replace(/[/\:*?<>|""]/g, "")
 // Rename a note
-await tp.file.move(filename)
+await tp.file.rename(filename)
 -%>
